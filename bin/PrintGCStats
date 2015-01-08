@@ -554,7 +554,7 @@ BEGIN {
   # 8K->4K(96K), or 8K->4K (96K)
   heap_size_status_re	= heap_size_change_re " ?" heap_size_paren_re;
 
-  gc_time_re		= "[0-9]+\\.[0-9]+";
+  gc_time_re		= "[0-9]+[\\.,][0-9]+";
   gc_time_secs_re	= gc_time_re " secs";
   gc_time_ms_re		= gc_time_re " ms";
   timestamp_re		= "(" gc_time_re ": *)?";
@@ -582,9 +582,9 @@ BEGIN {
   # or [GC pause (young) (initial mark), 0.082 secs]
   # or [GC remark, 0.082 secs]
   # or [GC cleanup 11M->11M(25M), 0.126 secs]
-  g1_gc_ms_re = "[0-9]+\\.[0-9]+ ms";
+  g1_gc_ms_re = "[0-9]+[\\.,][0-9]+ ms";
   g1_gc_stats_re =  "Min: [0-9]+[.0-9]+, Avg: [0-9]+[.0-9]+, Max: [0-9]+[.0-9]+, Diff: [0-9]+[.0-9]+, Sum: [0-9]+[.0-9]+";
-  g1_gc_stats_alt_re =  "Min: [0-9]+[\\.0-9]+, Avg: [0-9]+[\\.0-9]+, Max: [0-9]+[\\.0-9]+, Diff: [0-9]+[\\.0-9]+";
+  g1_gc_stats_alt_re =  "Min: [0-9]+[\\.,0-9]+, Avg: [0-9]+[\\.,0-9]+, Max: [0-9]+[\\.,0-9]+, Diff: [0-9]+[\\.,0-9]+";
   g1_stats_value_re = "[0-9]+[.0-9]+";
   g1_cpu_times_re = "\\[Times: user=" g1_stats_value_re " sys=" g1_stats_value_re ", real=" g1_stats_value_re " secs\\]";
   g1_avg_stats_re = "Avg: [0-9]+[.0-9]+";
@@ -1105,7 +1105,9 @@ $0 ~ "\\[" cms_concurrent_phase_re ": " gc_time_re "/" gc_time_secs_re "\\]" {
   }
   tString = substr($0, t_time_idx);
   match(tString, "/" gc_time_secs_re);
-  secs = substr(tString, 1, RSTART - 1) + 0.0;
+  tmp_secs = substr(tString, 1, RSTART - 1);
+  sub(",", ".", tmp_secs);
+  secs = tmp_secs + 0.0;
   recordStats(tIdx, secs);
   printInterval(); # Must do this before the getline below.
 
@@ -1379,7 +1381,7 @@ $0 ~ g1_young_stw_re {
   match($0, gc_time_secs_re);
   secs = substr($0, RSTART, RLENGTH - 5);
   recordStats(g1_young_idx, secs);
-  recordStats(g1_young_parallel_idx, getNestedValue($0,("Parallel Time: " g1_gc_ms_re),"[0-9]+\\.[0-9]+"));  
+  recordStats(g1_young_parallel_idx, getNestedValue($0,("Parallel Time: " g1_gc_ms_re),"[0-9]+[\\.,][0-9]+"));
   recordStats(g1_young_parallel_gc_workers_idx, getNestedValue($0,"GC Workers: [0-9]+","[0-9]+"));
   recordStats(g1_young_parallel_gc_worker_end_avg_idx, getNestedValue(getNestedValue($0, g1_parallel_gc_worker_start_re, g1_avg_stats_re), g1_stats_value_re, g1_stats_value_re));
   recordStats(g1_young_parallel_gc_worker_end_max_idx, getNestedValue(getNestedValue($0, g1_parallel_gc_worker_start_re, g1_max_stats_re), g1_stats_value_re, g1_stats_value_re)); 
@@ -1429,7 +1431,7 @@ $0 ~ g1_mixed_stw_re {
   match($0, gc_time_secs_re);
   secs = substr($0, RSTART, RLENGTH - 5);
   recordStats(g1_mixed_idx, secs);
-  recordStats(g1_mixed_parallel_idx, getNestedValue($0,("Parallel Time: " g1_gc_ms_re),"[0-9]+\\.[0-9]+"));  
+  recordStats(g1_mixed_parallel_idx, getNestedValue($0,("Parallel Time: " g1_gc_ms_re),"[0-9]+[\\.,][0-9]+"));
   recordStats(g1_mixed_parallel_gc_workers_idx, getNestedValue($0,"GC Workers: [0-9]+","[0-9]+"));
   recordStats(g1_mixed_parallel_gc_worker_start_avg_idx, getNestedValue(getNestedValue($0, g1_parallel_gc_worker_start_re, g1_avg_stats_re), g1_stats_value_re, g1_stats_value_re)); 
   recordStats(g1_mixed_parallel_gc_worker_start_max_idx, getNestedValue(getNestedValue($0, g1_parallel_gc_worker_start_re, g1_max_stats_re), g1_stats_value_re, g1_stats_value_re)); 
