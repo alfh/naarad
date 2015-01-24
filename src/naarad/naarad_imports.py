@@ -24,6 +24,7 @@ metric_imports_dict = {
   'GC' : 'naarad.metrics.gc_metric.GCMetric',
   'INNOTOP' : 'naarad.metrics.innotop_metric.INNOMetric',
   'JMETER' : 'naarad.metrics.jmeter_metric.JmeterMetric',
+  'SQUID' : 'naarad.metrics.squid_metric.SquidMetric',
   'LINKEDINANDROIDRUM' : 'naarad.metrics.linkedin_android_rum_metric.LinkedInAndroidRumMetric',
   'PROCVMSTAT' : 'naarad.metrics.procvmstat_metric.ProcVmstatMetric',
   'PROCMEMINFO' : 'naarad.metrics.procmeminfo_metric.ProcMeminfoMetric',

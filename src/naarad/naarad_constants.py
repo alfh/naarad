@@ -13,7 +13,8 @@ important_sub_metrics_import = {
     'LINKEDINANDROIDRUM': ('launch_time', 'nus_update_time'),
     'SAR-cpuusage': ('%sys', '%usr'),
     'SAR-device': ('%util', 'await'),
-    'JMETER': ('Overall_Summary.ResponseTime', 'Overall_Summary.DataThroughput', 'Overall_Summary.qps')
+    'JMETER': ('Overall_Summary.ResponseTime', 'Overall_Summary.DataThroughput', 'Overall_Summary.qps'),
+    'SQUID': ('Overall_Summary.ResponseTime', 'Overall_Summary.DataThroughput', 'Overall_Summary.qps')
 }
 device_type_metrics = ('SAR-cpuusage', 'SAR-cpuhz', 'SAR-device', 'SAR-dev', 'SAR-edev', 'SAR-network')
 # Status CODES
